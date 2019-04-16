@@ -6,7 +6,7 @@ const low_space = 20;
 
 function setup() {
   // create canvas
-  createCanvas(1280, 720);
+  createCanvas(720, 1280);
 
   input = createInput();
   input.position(20, 65);
@@ -27,8 +27,10 @@ function setup() {
 }
 
 function greet() {
+
   const name = input.value();
-  greeting.html('hello ' + name + '!' + task_sum);
+  //greeting.html('hello ' + name + '!' + task_sum);
+
   input.value('');
     
     task_list.push(new TaskBox(name, "TODO", task_sum));
@@ -69,7 +71,9 @@ function keyPressed() {
     if (keyCode === RIGHT_ARROW){
         if (task_list[index-1].status == "TODO") task_list[index-1].status = "DONE";
         else if (task_list[index-1].status == "DONE") task_list[index-1].status = "TODO";
-        task_list[index-1].name.html(task_list[index-1].status + ": " + task_list[index-1].n_text);
+        //task_list[index-1].name.html(task_list[index-1].status + ": " + task_list[index-1].n_text);
+        task_list[index-1].state_element.html(task_list[index-1].status + ":");
+        
     }
     
 
@@ -78,12 +82,15 @@ function keyPressed() {
 
 function TaskBox(name, sta, rank) {
     
-    //fill(102); // 塗りつぶしの色
-    //rect(50, 65+60*rank, 100, 20); // 四角形を生成(左上のx軸, 左上のy軸, 横幅, 縦幅)
+    this.state_element = createElement('h1', sta + ":");
+    this.task_element = createElement('h2', name);
     
-    this.name = createElement('h2', sta + ": " + name);
+    this.state_element.position(input.x, 65+low_space*rank);
+    this.task_element.position(input.x+100, 65+low_space*rank);
+    
+    //this.name = createElement('h2', sta + ": " + name);
     this.n_text = name;
-    this.name.position(input.x, 65+low_space*rank);
+    //this.name.position(input.x, 65+low_space*rank);
     this.status = sta;
     this.rank = rank;
     
