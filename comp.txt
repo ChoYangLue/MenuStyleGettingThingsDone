@@ -1,0 +1,7 @@
+# electron-packager <sourcedir> <appname> --platform=<platform> --arch=<arch> [optional]
+
+?platform	パッケージング対象のプラットフォーム。win32,darwin,linux,allが選択できる。
+?arch	パッケージング対象のアーキテクチャ。ia32,x64,allが選択できる。
+?electronVersion	Electronのバージョン指定
+
+ ./node_modules/.bin/electron-packager ./GTD_sun reiwaGTD --platform=darwin,win32 --arch=x64 --electronVersion=1.7.9

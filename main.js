@@ -1,4 +1,5 @@
-let input, button, greeting;
+let input, button, button_exp;
+//let greeting;
 let task_list = [];
 let task_sum = 0;
 const low_space = 20;
@@ -14,9 +15,14 @@ function setup() {
     button = createButton('commit');
     button.position(input.x + input.width, windowHeight/12);
     button.mousePressed(greet);
-
-    greeting = createElement('h2', 'what do you do next?');
-    greeting.position(20, 10);
+    button.style('background-color', '#4a4a4a');
+    button.style('color', '#d5cfb6');
+    
+    button_exp = createButton('export');
+    button_exp.position(input.x, 2);
+    button_exp.mousePressed(exportGTD);
+    button_exp.style('background-color', '#4a4a4a');
+    button_exp.style('color', '#d5cfb6');
 
     textAlign(CENTER);
     textSize(50);
@@ -32,7 +38,7 @@ function greet() {
         task_sum += 1;
 
         fill(102); // 塗りつぶしの色
-        rect(input.x, input.y+input.height +low_space*index, 200, 20); 
+        rect(input.x, input.y+input.height +low_space*index, windowWidth*2/3, 20); 
     }
     
 }
@@ -52,18 +58,18 @@ function keyPressed() {
         background('#d5cfb6');
         task_list[index-1].task_element.style('color', '#4a4a4a');
         if (index > 1) index -= 1;
-        task_list[index-1].task_element.style('color', '#aa9d68');
+        task_list[index-1].task_element.style('color', '#d5cfb6');
         fill(102); // 塗りつぶしの色
         
         if (alt_key) fill('#ba684f'); 
-        rect(input.x, input.y+input.height +low_space*index, 200, 20); // 四角形を生成(左上のx軸, 左上のy軸, 横幅, 縦幅)
+        rect(input.x, input.y+input.height +low_space*index, windowWidth*2/3, 20); // 四角形を生成(左上のx軸, 左上のy軸, 横幅, 縦幅)
         
     } else  if (keyCode === DOWN_ARROW) {
         //value = 255;
         background('#d5cfb6');
         task_list[index-1].task_element.style('color', '#4a4a4a');
         if (index < task_list.length) index += 1;
-        task_list[index-1].task_element.style('color', '#aa9d68');
+        task_list[index-1].task_element.style('color', '#d5cfb6');
         fill(102); // 塗りつぶしの色
         
         if (alt_key) {
@@ -74,7 +80,7 @@ function keyPressed() {
             task_list[index-1].task_element.position(input.x+70, 65+low_space*task_list[index-1].rank);
             */
         } 
-        rect(input.x, input.y+input.height +low_space*index, 200, 20); // 四角形を生成(左上のx軸, 左上のy軸, 横幅, 縦幅)
+        rect(input.x, input.y+input.height +low_space*index, windowWidth*2/3, 20); // 四角形を生成(左上のx軸, 左上のy軸, 横幅, 縦幅)
         
     }
     
@@ -101,7 +107,7 @@ function keyPressed() {
         task_sum -= 1;
         
         background('#d5cfb6');
-        if (task_list.length > 0) rect(input.x, input.y+input.height +low_space*index, 200, 20); 
+        if (task_list.length > 0) rect(input.x, input.y+input.height +low_space*index, windowWidth*2/3, 20); 
     
         for(var i=index;i < task_list.length; i++){
             //background('#000000');
@@ -150,7 +156,7 @@ function windowResized() {
     input.size(windowWidth/2,18);
     button.position(input.x + input.width, windowHeight/12);
     
-    if (task_list.length > 0) rect(input.x, input.y+input.height +low_space*index, 200, 20); 
+    if (task_list.length > 0) rect(input.x, input.y+input.height +low_space*index, windowWidth*2/3, 20); 
     
     for(var i=0;i < task_list.length; i++){
         //background('#000000');
@@ -166,5 +172,25 @@ function mouseClicked() {
     }
     
     background('#d5cfb6');
-    if (task_list.length > 0) rect(input.x, input.y+input.height +low_space*index, 200, 20); 
+    if (task_list.length > 0) rect(input.x, input.y+input.height +low_space*index, windowWidth*2/3, 20); 
+}
+
+function exportGTD(){
+    var writer = createWriter('2019'+month()+day()+'土日.txt');
+    
+    writer.print("2019/"+month()+"/"+day()+"の活動報告をさせていただきます。" );
+    writer.print("業務内容" );
+    
+    for(var i=0; i<task_list.length; i++){
+        if (task_list[i].status === 'DONE') writer.print("・"+task_list[i].n_text);
+    }
+    
+    writer.print("今後直近でやること");
+    
+    for(var i=0; i<task_list.length; i++){
+        if (task_list[i].status === 'TODO') writer.print("・"+task_list[i].n_text);
+    }
+    
+    writer.close();
+    writer.clear();
 }
