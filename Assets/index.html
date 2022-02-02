@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+
+    <title>The HTML5 Herald</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="SitePoint">
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+    <h1 id="title">MenuStyleGettingThingsDone</h1>
+    <input type="button" name="addBtn" value="追加" onclick="addItem()" />
+    <input type="button" name="delBtn" value="削除" onclick="delItem()" />
+    <input type="button" name="tesBtn" value="TS" onclick="addList()" />
+
+
+    <ul class="tree" id="list">
+        <li id="item0">リスト0</li>
+        <li id="item1">リスト1</li>
+        <li id="item2">
+            リスト2
+            <ul id="list2">
+                <li id="item3">リスト1</li>
+                <li id="item4">リスト2</li>
+                <li id="item5">リスト3</li>
+            </ul>
+        </li>
+
+    </ul>
+
+    <script type="text/javascript" src="./listManager.js"></script>
+</body>
+</html>
