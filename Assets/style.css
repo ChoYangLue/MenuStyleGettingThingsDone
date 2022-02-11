@@ -6,6 +6,36 @@ body {
     font-family: 'Fjalla One', sans-serif;
     font-size: 18px;
     color: #ccc;
+    margin: 0;
+    padding: 0;
+}
+
+.flex {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background: RGBA(0, 58, 97, 1);
+}
+.flex-big-list {
+    width: 65%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    background: RGBA(0, 58, 97, 1);
+}
+.flex-middle-list {
+    width: 50%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    background: RGBA(0, 58, 97, 1);
+}
+.flex-small-list {
+    width: 35%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    background: RGBA(0, 58, 97, 1);
 }
 
 /* ツリー構造 */

@@ -18,20 +18,32 @@
     <input type="button" name="delBtn" value="削除" onclick="delItem()" />
     <input type="button" name="tesBtn" value="TS" onclick="addList()" />
 
+    <div class="flex">
+        <div class="flex-big-list" id="list-left-div">
+            左
+            <ul class="tree" id="list-left">
+                <li id="item0">リスト0</li>
+                <li id="item1">リスト1</li>
+                <li id="item2">
+                    リスト2
+                    <ul id="list2">
+                        <li id="item3">リスト1</li>
+                        <li id="item4">リスト2</li>
+                        <li id="item5">リスト3</li>
+                    </ul>
+                </li>
 
-    <ul class="tree" id="list">
-        <li id="item0">リスト0</li>
-        <li id="item1">リスト1</li>
-        <li id="item2">
-            リスト2
-            <ul id="list2">
-                <li id="item3">リスト1</li>
-                <li id="item4">リスト2</li>
-                <li id="item5">リスト3</li>
             </ul>
-        </li>
-
-    </ul>
+        </div>
+        <div class="flex-small-list" id="list-right-div">
+            右
+            <ul class="tree" id="list-right">
+                <li id="item0">リスト0</li>
+                <li id="item1">リスト1</li>
+                <li id="item2">リスト2</li>
+            </ul>
+        </div>
+    </div>
 
     <script type="text/javascript" src="./listManager.js"></script>
 </body>

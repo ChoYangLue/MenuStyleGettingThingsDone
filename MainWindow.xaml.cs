@@ -13,14 +13,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Web.WebView2.Core;
+using System.Runtime.InteropServices;
 
 namespace WebExp
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// https://docs.microsoft.com/ja-jp/microsoft-edge/webview2/get-started/wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        // JavaScriptで呼ぶ関数を保持するオブジェクト
+        private JsToCs CsClass = new JsToCs();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -34,6 +39,10 @@ namespace WebExp
             //webView.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
 
             LoadPath(Environment.CurrentDirectory+$"/Assets/index.html");
+
+            //JavaScriptからC#のメソッドが実行できる様に仕込む
+            webView.CoreWebView2.AddHostObjectToScript("class", CsClass);
+
         }
 
         private void CoreWebView2_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
@@ -52,6 +61,17 @@ namespace WebExp
             // WebView2にローカルファイルのURIを設定
             webView.CoreWebView2.Navigate(uri.AbsoluteUri);
 
+        }
+
+        /// <summary>WebView2に読み込ませるためのJsで実行する関数を保持させたクラス</summary>
+        [ComVisible(true)]
+        public class JsToCs
+        {
+            public void MessageShow(string strText)
+            {
+                Console.WriteLine("Jsからの呼び出し>" + strText);
+                //MessageBox.Show("Jsからの呼び出し>" + strText);
+            }
         }
     }
 }

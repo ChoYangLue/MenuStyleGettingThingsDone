@@ -11,6 +11,13 @@ var settingList = [
     { name: "setting7", parent: "setting2", data: "setting7" },
 ];
 
+
+var ser = {
+    itemId: "id0",
+    itemData: "this is a pen",
+    itemParentId: "root",
+};
+
 function addItemObject(itemObj) {
     var elemLi = document.createElement('li');
     elemLi.id = itemObj.name;
@@ -18,7 +25,7 @@ function addItemObject(itemObj) {
     var caption = document.createTextNode(itemObj.data);
     elemLi.appendChild(caption);
     if (itemObj.parent == "root") {
-        document.getElementById('list').appendChild(elemLi);
+        document.getElementById('list-left').appendChild(elemLi);
         return;
     }
 
@@ -68,6 +75,21 @@ function outFocus(listObj, fcind) {
     elem.style.backgroundColor = "#003a61";
 }
 
+function deleteDisplayList(listId) {
+
+    const ul = document.getElementById(listId);
+    const len = ul.children.length;
+    for (var i = 0; i < len; i++) {
+        //[li]を削除する
+        ul.removeChild(ul.children[0]);
+    }
+}
+
+function switchStyle(divName, origStyleName, changeStyleName) {
+    document.querySelector(divName).classList.remove(origStyleName);
+    document.querySelector(divName).classList.toggle(changeStyleName);
+}
+
 
 loadListObj(settingList);
 
@@ -90,10 +112,15 @@ function eventKeyDown(e) {
             outFocus(settingList, focusIndex);
             focusIndex = getNextFocusIndex(settingList, focusIndex);
             setFocus(settingList, focusIndex);
+            deleteDisplayList("list-right");
             break;
         case "ArrowRight":
+            switchStyle('#list-right-div', 'flex-small-list', 'flex-big-list');
+            switchStyle('#list-left-div', 'flex-big-list', 'flex-small-list');
+            break;
         case "ArrowLeft":
-            console.log('Mangoes and papayas are $2.79 a pound.');
+            switchStyle('#list-right-div', 'flex-big-list', 'flex-small-list');
+            switchStyle('#list-left-div', 'flex-small-list', 'flex-big-list');
             break;
         default:
             break;
@@ -111,13 +138,15 @@ function addItem() {
     elem.id = 'item' + number;
     var caption = document.createTextNode('リスト' + number);
     elem.appendChild(caption);
-    document.getElementById('list').appendChild(elem);
+    document.getElementById('list-left').appendChild(elem);
+
+    chrome.webview.hostObjects.class.MessageShow('リスト' + number);
 }
 
 function addList() {
     number++;
     var elem = document.createElement('ul');
-    elem.id = 'list' + number;
+    elem.id = 'list-left' + number;
 
     var elem1 = document.createElement('li');
     elem1.id = 'item' + number;
@@ -135,6 +164,6 @@ function delItem() {
         return false;
     }
     var elem = document.getElementById('item' + number);
-    document.getElementById('list').removeChild(elem);
+    document.getElementById('list-left').removeChild(elem);
     number--;
 }
