@@ -9,14 +9,10 @@ var settingList = [
     { name: "setting5", parent: "setting4", data: "setting5" },
     { name: "setting6", parent: "setting4", data: "setting6" },
     { name: "setting7", parent: "setting2", data: "setting7" },
+    { name: "setting8", parent: "root", data: "setting8" },
+    { name: "setting9", parent: "root", data: "setting9" },
 ];
 
-
-var ser = {
-    itemId: "id0",
-    itemData: "this is a pen",
-    itemParentId: "root",
-};
 
 function addItemObject(itemObj) {
     var elemLi = document.createElement('li');
@@ -64,7 +60,9 @@ function setFocus(listObj, fcind) {
 
     var elem = document.getElementById(listObj[fcind].name);
     //elem.style.fontWeight = "bold";
-    elem.style.backgroundColor = "#99ff99";
+    elem.style.backgroundColor = "#ff7800";
+    elem.style.color = "#111111";
+    elem.style.listStylePosition = "outside";
 }
 
 function outFocus(listObj, fcind) {
@@ -72,7 +70,9 @@ function outFocus(listObj, fcind) {
 
     var elem = document.getElementById(listObj[fcind].name);
     //elem.style.fontWeight = "normal";
-    elem.style.backgroundColor = "#003a61";
+    elem.style.backgroundColor = "#111111";
+    elem.style.color = "#ff7800";
+    elem.style.listStylePosition = "outside";
 }
 
 function deleteDisplayList(listId) {
