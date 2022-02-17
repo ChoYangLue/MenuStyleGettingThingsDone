@@ -14,6 +14,23 @@ var settingList = [
 ];
 
 
+var taskObject = {
+    version: "01.00",
+    task: [
+        { id: "mytask1", data: "setting1", childTask: [
+            { id: "mytask3", data: "setting3", childTask: [] },
+            { id: "mytask4", data: "setting4", childTask: [] },
+            { id: "mytask5", data: "setting5", childTask: [] },
+        ] },
+        { id: "mytask2", data: "setting2", childTask: [
+            { id: "mytask7", data: "setting7", childTask: [] },
+            { id: "mytask8", data: "setting8", childTask: [] },
+        ] },
+        { id: "mytask6", data: "setting6", childTask: [] },
+    ],
+};
+
+
 function addItemObject(itemObj) {
     var elemLi = document.createElement('li');
     elemLi.id = itemObj.name;
@@ -90,24 +107,64 @@ function switchStyle(divName, origStyleName, changeStyleName) {
     document.querySelector(divName).classList.toggle(changeStyleName);
 }
 
+function isDisplayContextMenu() {
+    if (document.getElementById('contextmenu').style.display == "block") return true;
+    return false;
+}
+
+function showContextMenu(){
+    document.getElementById('contextmenu').style.left=window.innerWidth/2+"px";
+    document.getElementById('contextmenu').style.top=window.innerHeight/2+"px";
+            
+    //メニューをblockで表示させる
+    if (isDisplayContextMenu())
+    {
+        document.getElementById('contextmenu').style.display="none";
+        switch(contextMenuFocusIndex){
+            case 0:
+                document.getElementById(settingList[focusIndex].name).innerHTML = '<input type="text" id="edit-input" value="'+settingList[focusIndex].data+'"/>'
+                editMode = true;
+                document.getElementById("edit-input").focus();
+                break;
+            default:
+                break;
+        }
+    }
+    else {
+        document.getElementById('contextmenu').style.display="block";
+    }
+    contextMenuFocusIndex = 0;
+}
 
 loadListObj(settingList);
 
 var focusIndex = 0;
 setFocus(settingList, focusIndex);
-
-
 var number = 1;
+
+var contextMenuFocusIndex = 0;
+var editMode = false;
+
 function eventKeyDown(e) {
 
     switch (e.key) {
         case "ArrowUp":
+            if (isDisplayContextMenu())
+            {
+                contextMenuFocusIndex -=1;
+                break;
+            }
             number -= 1;
             outFocus(settingList, focusIndex);
             if (focusIndex > 0) focusIndex -= 1;
             setFocus(settingList, focusIndex);
             break;
         case "ArrowDown":
+            if (isDisplayContextMenu())
+            {
+                contextMenuFocusIndex += 1;
+                break;
+            }
             number += 1;
             outFocus(settingList, focusIndex);
             focusIndex = getNextFocusIndex(settingList, focusIndex);
@@ -115,12 +172,31 @@ function eventKeyDown(e) {
             deleteDisplayList("list-right");
             break;
         case "ArrowRight":
+            if (isDisplayContextMenu() || 
+                editMode)
+            {
+                break;
+            }
             switchStyle('#list-right-div', 'flex-small-list', 'flex-big-list');
             switchStyle('#list-left-div', 'flex-big-list', 'flex-small-list');
             break;
         case "ArrowLeft":
+            if (isDisplayContextMenu() || 
+                editMode)
+            {
+                break;
+            }
             switchStyle('#list-right-div', 'flex-big-list', 'flex-small-list');
             switchStyle('#list-left-div', 'flex-small-list', 'flex-big-list');
+            break;
+        case "Enter":
+            if (editMode)
+            {
+                document.getElementById(settingList[focusIndex].name).innerHTML = document.getElementById("edit-input").value;
+                editMode = false;
+                break;
+            }
+            showContextMenu();
             break;
         default:
             break;

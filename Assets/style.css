@@ -113,3 +113,17 @@ ul.tree > li:first-child::after {
 .tree li a:hover + ul ul::before, .tree li a:focus + ul ul::before {
     border-color: #000; /*connector color on hover*/
 }
+
+/* コンテキストメニュー */
+#contextmenu{
+    display:none;
+    position:fixed;
+    left:0px;
+    top:0px;
+    width:100px;
+    height:100px;
+    border: 1px solid #ff7800;
+}
+#contextmenu li{
+    cursor:pointer;
+}
