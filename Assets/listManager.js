@@ -1,19 +1,6 @@
 ﻿
 document.addEventListener('keydown', eventKeyDown);
 
-var settingList = [
-    { name: "setting1", parent: "root", data: "setting1" },
-    { name: "setting2", parent: "root", data: "setting2" },
-    { name: "setting3", parent: "setting2", data: "setting3" },
-    { name: "setting4", parent: "setting2", data: "setting4" },
-    { name: "setting5", parent: "setting4", data: "setting5" },
-    { name: "setting6", parent: "setting4", data: "setting6" },
-    { name: "setting7", parent: "setting2", data: "setting7" },
-    { name: "setting8", parent: "root", data: "setting8" },
-    { name: "setting9", parent: "root", data: "setting9" },
-];
-
-
 var taskObject = {
     version: "01.00",
     task: [
@@ -27,55 +14,26 @@ var taskObject = {
             { id: "mytask8", data: "setting8", childTask: [] },
         ] },
         { id: "mytask6", data: "setting6", childTask: [] },
+        { id: "mytask9", data: "setting9", childTask: [] },
     ],
 };
 
 
-function addItemObject(itemObj) {
-    var elemLi = document.createElement('li');
-    elemLi.id = itemObj.name;
-
-    var caption = document.createTextNode(itemObj.data);
-    elemLi.appendChild(caption);
-    if (itemObj.parent == "root") {
-        document.getElementById('list-left').appendChild(elemLi);
-        return;
+function addTaskListForDiv(taskList, divName) {
+    for (var i = 0; i < taskList.length; ++i) {
+        var elemLi = document.createElement('li');
+        elemLi.id = taskList[i].id;
+        
+        var caption = document.createTextNode(taskList[i].data);
+        elemLi.appendChild(caption);
+        document.getElementById(divName).appendChild(elemLi);
     }
-
-    var parentElem = document.getElementById(itemObj.parent);
-    var retElemUl = parentElem.getElementsByTagName("ul");
-    console.log(retElemUl);
-    if (retElemUl.length != 0) {
-        retElemUl[0].appendChild(elemLi);
-        return;
-    }
-
-    var elemUl = document.createElement('ul');
-    elemUl.id = itemObj.parent;
-    elemUl.appendChild(elemLi);
-    document.getElementById(itemObj.parent).appendChild(elemUl);
-}
-
-function loadListObj(listObj) {
-    for (let i = 0; i < listObj.length; ++i) {
-        addItemObject(listObj[i]);
-    }
-}
-
-function getNextFocusIndex(listObj, ind) {
-    if (ind+1 > settingList.length) return ind;
-
-    for (let i = ind+1; i < listObj.length; ++i) {
-        if (listObj[i].parent == listObj[ind].parent) return i;
-    }
-
-    return 0;
 }
 
 function setFocus(listObj, fcind) {
-    if (fcind < 0 || fcind > settingList.length) return;
+    if (fcind < 0 || fcind > listObj.length) return;
 
-    var elem = document.getElementById(listObj[fcind].name);
+    var elem = document.getElementById(listObj[fcind].id);
     //elem.style.fontWeight = "bold";
     elem.style.backgroundColor = "#ff7800";
     elem.style.color = "#111111";
@@ -83,9 +41,9 @@ function setFocus(listObj, fcind) {
 }
 
 function outFocus(listObj, fcind) {
-    if (fcind < 0 || fcind > settingList.length) return;
+    if (fcind < 0 || fcind > listObj.length) return;
 
-    var elem = document.getElementById(listObj[fcind].name);
+    var elem = document.getElementById(listObj[fcind].id);
     //elem.style.fontWeight = "normal";
     elem.style.backgroundColor = "#111111";
     elem.style.color = "#ff7800";
@@ -107,72 +65,66 @@ function switchStyle(divName, origStyleName, changeStyleName) {
     document.querySelector(divName).classList.toggle(changeStyleName);
 }
 
-function isDisplayContextMenu() {
-    if (document.getElementById('contextmenu').style.display == "block") return true;
+function isDisplayContextMenu(ctxId) {
+    if (document.getElementById(ctxId).style.display == "block") return true;
     return false;
 }
 
-function showContextMenu(){
-    document.getElementById('contextmenu').style.left=window.innerWidth/2+"px";
-    document.getElementById('contextmenu').style.top=window.innerHeight/2+"px";
-            
-    //メニューをblockで表示させる
-    if (isDisplayContextMenu())
+function displayContextMenuById(ctxId){
+    document.getElementById(ctxId).style.left=window.innerWidth/2+"px";
+    document.getElementById(ctxId).style.top=window.innerHeight/2+"px";
+
+    if (isDisplayContextMenu(ctxId))
     {
-        document.getElementById('contextmenu').style.display="none";
-        switch(contextMenuFocusIndex){
-            case 0:
-                document.getElementById(settingList[focusIndex].name).innerHTML = '<input type="text" id="edit-input" value="'+settingList[focusIndex].data+'"/>'
-                editMode = true;
-                document.getElementById("edit-input").focus();
-                break;
-            default:
-                break;
-        }
+        document.getElementById(ctxId).style.display="none";
     }
     else {
-        document.getElementById('contextmenu').style.display="block";
+        document.getElementById(ctxId).style.display="block";
     }
     contextMenuFocusIndex = 0;
 }
 
-loadListObj(settingList);
+addTaskListForDiv(taskObject.task, 'list-left');
 
 var focusIndex = 0;
-setFocus(settingList, focusIndex);
+setFocus(taskObject.task, focusIndex);
 var number = 1;
 
 var contextMenuFocusIndex = 0;
-var editMode = false;
+var editMode = 0;
 
 function eventKeyDown(e) {
 
     switch (e.key) {
         case "ArrowUp":
-            if (isDisplayContextMenu())
+            if (isDisplayContextMenu('contextmenu'))
             {
                 contextMenuFocusIndex -=1;
                 break;
             }
-            number -= 1;
-            outFocus(settingList, focusIndex);
+            outFocus(taskObject.task, focusIndex);
             if (focusIndex > 0) focusIndex -= 1;
-            setFocus(settingList, focusIndex);
+            setFocus(taskObject.task, focusIndex);
+            
+            deleteDisplayList("list-right");
+            addTaskListForDiv(taskObject.task[focusIndex].childTask, 'list-right');
             break;
         case "ArrowDown":
-            if (isDisplayContextMenu())
+            if (isDisplayContextMenu('contextmenu'))
             {
                 contextMenuFocusIndex += 1;
                 break;
             }
-            number += 1;
-            outFocus(settingList, focusIndex);
-            focusIndex = getNextFocusIndex(settingList, focusIndex);
-            setFocus(settingList, focusIndex);
+            outFocus(taskObject.task, focusIndex);
+            if (focusIndex+1 < taskObject.task.length) focusIndex += 1;
+            else focusIndex = 0;
+            setFocus(taskObject.task, focusIndex);
+            
             deleteDisplayList("list-right");
+            addTaskListForDiv(taskObject.task[focusIndex].childTask, 'list-right');
             break;
         case "ArrowRight":
-            if (isDisplayContextMenu() || 
+            if (isDisplayContextMenu('contextmenu') || 
                 editMode)
             {
                 break;
@@ -181,7 +133,7 @@ function eventKeyDown(e) {
             switchStyle('#list-left-div', 'flex-big-list', 'flex-small-list');
             break;
         case "ArrowLeft":
-            if (isDisplayContextMenu() || 
+            if (isDisplayContextMenu('contextmenu') || 
                 editMode)
             {
                 break;
@@ -190,56 +142,67 @@ function eventKeyDown(e) {
             switchStyle('#list-left-div', 'flex-small-list', 'flex-big-list');
             break;
         case "Enter":
-            if (editMode)
+            switch(editMode)
             {
-                document.getElementById(settingList[focusIndex].name).innerHTML = document.getElementById("edit-input").value;
-                editMode = false;
+                case 0:
+                    break;
+                case 1:
+                    document.getElementById(taskObject.task[focusIndex].id).innerHTML = document.getElementById("edit-input").value;
+                    break;
+                default:
+                    break;
+            }
+            if (editMode != 0){
+                editMode = 0;
                 break;
             }
-            showContextMenu();
+            console.log(editMode);
+            
+            if (isDisplayContextMenu('contextmenu'))
+            {
+                console.log(contextMenuFocusIndex);
+                switch(contextMenuFocusIndex){
+                    case 0:
+                        document.getElementById(taskObject.task[focusIndex].id).innerHTML = '<input type="text" id="edit-input" value="'+taskObject.task[focusIndex].data+'"/>'
+                        editMode = 1;
+                        document.getElementById("edit-input").focus();
+                        break;
+                    case 1:
+                        addItem();
+                        break;
+                    case 2:
+                        delItem(focusIndex);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+            displayContextMenuById('contextmenu');
             break;
         default:
             break;
     }
 
-    if (e.key == "Enter") {
-
-    }
+    
     console.log(e.key);
 }
 
 function addItem() {
-    number++;
+    var dt = new Date();
     var elem = document.createElement('li');
-    elem.id = 'item' + number;
-    var caption = document.createTextNode('リスト' + number);
+    elem.id = 'item' + dt;
+    var caption = document.createTextNode('リスト' + dt);
     elem.appendChild(caption);
     document.getElementById('list-left').appendChild(elem);
-
-    chrome.webview.hostObjects.class.MessageShow('リスト' + number);
+    
+    var item = { id: elem.id, data: caption, childTask: [] };
+    taskObject.task.push(item);
 }
 
-function addList() {
-    number++;
-    var elem = document.createElement('ul');
-    elem.id = 'list-left' + number;
 
-    var elem1 = document.createElement('li');
-    elem1.id = 'item' + number;
-
-    var caption = document.createTextNode('リスト' + number);
-    elem1.appendChild(caption);
-    elem.appendChild(elem1);
-
-    document.getElementById('item1').appendChild(elem);
-}
-
-function delItem() {
-    if (number == 0) {
-        alert('削除できる項目がありません');
-        return false;
-    }
-    var elem = document.getElementById('item' + number);
+function delItem(ind) {
+    var elem = document.getElementById(taskObject.task[focusIndex].id);
     document.getElementById('list-left').removeChild(elem);
-    number--;
+    taskObject.task.splice(focusIndex, 1);
 }
