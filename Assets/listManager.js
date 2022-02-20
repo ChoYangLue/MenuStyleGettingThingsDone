@@ -19,8 +19,7 @@ var taskObject = {
 };
 
 
-function saveTaskObjectToLocalStrage()
-{
+function saveTaskObjectToLocalStrage(){
     if (!window.localStorage) {
         console.log("can not use local storage.");
 		return;
@@ -29,12 +28,14 @@ function saveTaskObjectToLocalStrage()
     localStorage.setItem('userData', json);
 }
 
-function loadTaskObjectFromLocalStrage()
-{
+function loadTaskObjectFromLocalStrage(){
+    if (!window.localStorage) {
+        console.log("can not use local storage.");
+		return;
+    }
     var data = localStorage.getItem('userData');
     taskObject = JSON.parse(data);
 }
-
 
 function addTaskListForDiv(taskList, divName) {
     for (var i = 0; i < taskList.length; ++i) {
@@ -107,7 +108,6 @@ addTaskListForDiv(taskObject.task, 'list-left');
 
 var focusIndex = 0;
 setFocus(taskObject.task, focusIndex);
-var number = 1;
 
 var contextMenuFocusIndex = 0;
 var editMode = 0;
@@ -189,7 +189,7 @@ function eventKeyDown(e) {
                         document.getElementById("edit-input").focus();
                         break;
                     case 1:
-                        addItem();
+                        addItem(focusIndex);
                         break;
                     case 2:
                         delItem(focusIndex);
@@ -216,9 +216,17 @@ function addItem(focusIndex) {
     elem.id = 'item' + dt;
     var caption = document.createTextNode('リスト' + dt);
     elem.appendChild(caption);
-    document.getElementById('list-left').appendChild(elem);
     
     var item = { id: elem.id, data: caption, childTask: [] };
+    
+    if (focusIndex < taskObject.task.length) {
+        var itemElem = document.getElementById(taskObject.task[focusIndex+1].id);
+        document.getElementById('list-left').insertBefore(elem, itemElem);
+        taskObject.task.splice(focusIndex+1, 0, item);
+        return;
+    }
+    
+    document.getElementById('list-left').appendChild(elem);
     taskObject.task.push(item);
 }
 
