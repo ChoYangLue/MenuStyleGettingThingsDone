@@ -19,6 +19,23 @@ var taskObject = {
 };
 
 
+function saveTaskObjectToLocalStrage()
+{
+    if (!window.localStorage) {
+        console.log("can not use local storage.");
+		return;
+    }
+    var json = JSON.stringify(taskObject, undefined, 1);
+    localStorage.setItem('userData', json);
+}
+
+function loadTaskObjectFromLocalStrage()
+{
+    var data = localStorage.getItem('userData');
+    taskObject = JSON.parse(data);
+}
+
+
 function addTaskListForDiv(taskList, divName) {
     for (var i = 0; i < taskList.length; ++i) {
         var elemLi = document.createElement('li');
@@ -52,8 +69,8 @@ function outFocus(listObj, fcind) {
 
 function deleteDisplayList(listId) {
 
-    const ul = document.getElementById(listId);
-    const len = ul.children.length;
+    var ul = document.getElementById(listId);
+    var len = ul.children.length;
     for (var i = 0; i < len; i++) {
         //[li]を削除する
         ul.removeChild(ul.children[0]);
@@ -84,6 +101,8 @@ function displayContextMenuById(ctxId){
     contextMenuFocusIndex = 0;
 }
 
+
+loadTaskObjectFromLocalStrage();
 addTaskListForDiv(taskObject.task, 'list-left');
 
 var focusIndex = 0;
@@ -147,6 +166,7 @@ function eventKeyDown(e) {
                 case 0:
                     break;
                 case 1:
+                    taskObject.task[focusIndex].data = document.getElementById("edit-input").value;
                     document.getElementById(taskObject.task[focusIndex].id).innerHTML = document.getElementById("edit-input").value;
                     break;
                 default:
@@ -154,6 +174,7 @@ function eventKeyDown(e) {
             }
             if (editMode != 0){
                 editMode = 0;
+                saveTaskObjectToLocalStrage();
                 break;
             }
             console.log(editMode);
@@ -172,6 +193,8 @@ function eventKeyDown(e) {
                         break;
                     case 2:
                         delItem(focusIndex);
+                        if (focusIndex > 0) focusIndex -= 1;
+                        setFocus(taskObject.task, focusIndex);
                         break;
                     default:
                         break;
@@ -183,12 +206,11 @@ function eventKeyDown(e) {
         default:
             break;
     }
-
     
     console.log(e.key);
 }
 
-function addItem() {
+function addItem(focusIndex) {
     var dt = new Date();
     var elem = document.createElement('li');
     elem.id = 'item' + dt;
@@ -201,8 +223,9 @@ function addItem() {
 }
 
 
-function delItem(ind) {
+function delItem(focusIndex) {
     var elem = document.getElementById(taskObject.task[focusIndex].id);
     document.getElementById('list-left').removeChild(elem);
+    
     taskObject.task.splice(focusIndex, 1);
 }
